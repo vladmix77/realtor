@@ -180,30 +180,26 @@ h1 {
   margin-bottom: 100px;
 }
 
-.offer__box {
+.offer__items {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;
 }
 
-.offer__box-inner {
+.offer__item {
   background-color: #c4c4c4;
   max-width: 350px;
   margin: 20px;
+  box-shadow: 0 0 10px -1px #000;
 }
 
-.offer__box-inner-wrap {
-  margin: 4px;
-  // border: 4px #1F2E7B solid;
-}
-
-.offer__box-inner-wrap-img {
-  min-width: 290px;
+.offer__item-image {
+  min-width: 350px;
   height: 230px;
   width: 100%;
 }
 
-.offer__box-inner-title {
+.offer__item-title {
   font-size: 20px;
   font-style: normal;
   font-weight: 700;
@@ -214,7 +210,7 @@ h1 {
   margin-bottom: 8px;
 }
 
-.offer__box-inner-subtitle {
+.offer__item-subtitle {
   margin-bottom: 16px;
   text-align: center;
 }
