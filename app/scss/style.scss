@@ -217,7 +217,43 @@ h1 {
 
 // --- Footer ---
 
+.footer {
+  height: 100px;
+  background-color: #0f193d;
+  padding-top: 15px;
+}
 
+.footer__phone {
+  font-family: "Open Sans", sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-align: center;
+}
 
+.footer__phone a {
+  color: #fff;
+  text-decoration: none;
+}
 
+.footer__email {
+  font-family: "Open Sans", sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  letter-spacing: 3px;
+  text-align: center;
+  padding-top: 10px;
+}
+
+.footer__email a {
+  color: rgba(254, 249, 131, 0.7);
+  text-decoration: none;
+}
+
+.footer__copyright {
+  font-size: 9px;
+  color: rgba(255, 255, 255, 0.6);
+  text-align: center;
+  padding-top: 15px;
+}
 @import "media";
