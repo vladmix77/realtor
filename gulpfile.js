@@ -38,7 +38,8 @@ gulp.task("css", function() {
     .src([
       "node_modules/normalize.css/normalize.css",
       "node_modules/slick-carousel/slick/slick.css",
-      "node_modules/animate.css/animate.css"
+      "node_modules/animate.css/animate.css",
+      "node_modules/magnific-popup/dist/magnific-popup.css"
     ])
     .pipe(concat("_libs.scss"))
     .pipe(gulp.dest("app/scss"))
@@ -61,7 +62,9 @@ gulp.task("script", function() {
 
 gulp.task("js", function() {
   return gulp
-    .src(["node_modules/slick-carousel/slick/slick.js"])
+    .src(["node_modules/slick-carousel/slick/slick.js",
+          "node_modules/jquery.maskedinput/src/jquery.maskedinput.js",
+          "node_modules/magnific-popup/dist/jquery.magnific-popup.min.js"])
     .pipe(concat("libs.min.js"))
     .pipe(uglify())
     .pipe(gulp.dest("app/js"))
@@ -82,6 +85,7 @@ gulp.task("browser-sync", function() {
 
 gulp.task("export", function() {
   let buildHtml = gulp.src("app/**/*.html").pipe(gulp.dest("dist"));
+  let buildPhp = gulp.src("app/**/*.php").pipe(gulp.dest("dist"));
   let buildCss = gulp.src("app/css/**/*.css").pipe(gulp.dest("dist/css"));
   let buildJs = gulp.src("app/js/**/*.js").pipe(gulp.dest("dist/js"));
   let buildFonts = gulp.src("app/fonts/**/*.*").pipe(gulp.dest("dist/fonts"));
