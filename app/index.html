@@ -20,7 +20,9 @@
             <a href="#"><img src="./images/header__logo.png" alt="" /></a>
           </div>
           <div class="heading__btn">
-            <button href="#form" class="button popup">Заказать звонок</button>
+            <button href="#form" class="popup-with-zoom-anim button popup">
+              Заказать звонок
+            </button>
           </div>
         </div>
       </div>
@@ -32,11 +34,12 @@
       <div class="container">
         <h1>Лучшие предложения от застройщиков!</h1>
         <div class="first__btn">
-          <button href="#form" class="button popup">Заказать звонок</button>
+          <button href="#form" class="popup-with-zoom-anim button popup">
+            Заказать звонок
+          </button>
         </div>
       </div>
     </section>
-
     <!-- --- Block expert --- -->
 
     <section class="expert">
@@ -211,29 +214,28 @@
       <div class="footer__copyright">© Copyright 2020 fortuna61.ru</div>
     </footer>
 
-    <!-- <section class="first">
-      <div class="container">
-        <h1>Лучшие предложения от застройщиков!</h1>
-        <div class="first__btn">
-          <button class="button">Заказать звонок</button>
-        </div>
-      </div>
-    </section> -->
-
+    <!-- --- Popup ---  -->
 
     <div class="hidden">
-      <form id="form">
+      <form id="form" class="zoom-anim-dialog mfp-hide">
         <h3>Форма отправки</h3>
-        <input type="text" name="name" placeholder="Введите логин" required /><br />
-        <input type="text" name="phone" placeholder="Введите телефон" required /><br />
+        <input
+          type="text"
+          name="name"
+          placeholder="Введите логин"
+          required
+        /><br />
+        <input
+          type="text"
+          name="phone"
+          placeholder="Введите телефон"
+          required
+        /><br />
         <!-- <textarea name="text" cols="400" rows="4"></textarea> -->
         <button class="form-button">Отправить</button>
       </form>
     </div>
 
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="js/libs.min.js"></script>
-    <script src="js/main.js"></script>
+    <script src="js/main.min.js"></script>
   </body>
 </html>

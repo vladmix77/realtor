@@ -1,7 +1,21 @@
 $(document).ready(function () {
-    $(".popup").magnificPopup();
+    $(".popup-with-zoom-anim").magnificPopup({
+      type: 'inline',
   
-    $(".form").submit(function () {
+      fixedContentPos: false,
+      fixedBgPos: true,
+  
+      overflowY: 'auto',
+  
+      closeBtnInside: true,
+      preloader: false,
+      
+      midClick: true,
+      removalDelay: 300,
+      mainClass: 'my-mfp-zoom-in'
+    });
+  
+    $("#form").submit(function () {
       $.ajax({
         type: "POST",
         url: "mail.php",
@@ -19,8 +33,7 @@ $(document).ready(function () {
   
     // Маска ввода номера телефона (плагин maskedinput)
     $(function ($) {
-      $('[name="phone"]').mask("+7(999) 999-9999");
+      $('[name="phone"]').mask("+7 (999) 999-9999");
     });
     
   });
-  

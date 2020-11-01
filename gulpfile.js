@@ -1,112 +1,135 @@
-// Подключение gulp и gulp-scss и browser-sync...
+// Определяем переменную "preprocessor"
+let preprocessor = 'scss'; 
 
-let gulp = require("gulp"),
-  sass = require("gulp-sass"),
-  browserSync = require("browser-sync"),
-  uglify = require("gulp-uglify"),
-  concat = require("gulp-concat"),
-  rename = require("gulp-rename"),
-  del = require("del"),
-  autoprefixer = require("gulp-autoprefixer");
+// Определяем константы Gulp
+const { src, dest, parallel, series, watch } = require('gulp');
 
-// task для очистки файлов и папок (папки (dist)).
+// Подключаем Browsersync
+const browserSync = require('browser-sync').create();
 
-gulp.task("clean", async function() {
-  del.sync("dist");
-});
+// Подключаем gulp-concat
+const concat = require('gulp-concat');
 
-// task для scss и browserSync (компиляция в css и настройки (outputStyle) и переименование)
+// Подключаем gulp-uglify-es
+const uglify = require('gulp-uglify-es').default;
 
-gulp.task("scss", function() {
-  return gulp
-    .src("app/scss/**/*.scss")
-    .pipe(sass({ outputStyle: "compressed" }))
-    .pipe(
-      autoprefixer({
-        cascade: false
-      })
-    )
-    .pipe(rename({ suffix: ".min" }))
-    .pipe(gulp.dest("app/css"))
-    .pipe(browserSync.reload({ stream: true }));
-});
+// Подключаем модули gulp-sass и gulp-less
+const scss = require('gulp-sass');
+const sass = require('gulp-sass');
+const less = require('gulp-less');
 
-// task для normalize.css и.т.д. обьединение файлов concat
+// Подключаем Autoprefixer
+const autoprefixer = require('gulp-autoprefixer');
 
-gulp.task("css", function() {
-  return gulp
-    .src([
-      "node_modules/normalize.css/normalize.css",
-      "node_modules/slick-carousel/slick/slick.css",
-      "node_modules/animate.css/animate.css",
-      "node_modules/magnific-popup/dist/magnific-popup.css"
-    ])
-    .pipe(concat("_libs.scss"))
-    .pipe(gulp.dest("app/scss"))
-    .pipe(browserSync.reload({ stream: true }));
-});
+// Подключаем модуль gulp-clean-css
+const cleancss = require('gulp-clean-css');
 
-// task для browser-sync - html
+// Подключаем gulp-imagemin для работы с изображениями
+// const imagemin = require('gulp-imagemin');
 
-gulp.task("html", function() {
-  return gulp.src("app/*.html").pipe(browserSync.reload({ stream: true }));
-});
+// Подключаем модуль gulp-newer
+const newer = require('gulp-newer');
 
-// task для browser-sync - js
+// Подключаем модуль del
+const del = require('del');
 
-gulp.task("script", function() {
-  return gulp.src("app/js/*.js").pipe(browserSync.reload({ stream: true }));
-});
+// Определяем логику работы Browsersync
+function browsersync() {
+	browserSync.init({ // Инициализация Browsersync
+		server: { baseDir: 'app/' }, // Указываем папку сервера
+		notify: false, // Отключаем уведомления
+		online: true // Режим работы: true или false
+	})
+}
 
-// task для всех файлов js и обьеденение (slik и jsmagnific-popup в lib.min.js)
+function scripts() {
+	return src([ // Берём файлы из источников
+		'node_modules/jquery/dist/jquery.min.js',
+		'node_modules/magnific-popup/dist/jquery.magnific-popup.min.js',
+		'node_modules/jquery.maskedinput/src/jquery.maskedinput.js', // Пример подключения библиотеки
+		'app/js/main.js', // Пользовательские скрипты, использующие библиотеку, должны быть подключены в конце
+		])
+	.pipe(concat('main.min.js')) // Конкатенируем в один файл
+	.pipe(uglify()) // Сжимаем JavaScript
+	.pipe(dest('app/js/')) // Выгружаем готовый файл в папку назначения
+	.pipe(browserSync.stream()) // Триггерим Browsersync для обновления страницы
+}
 
-gulp.task("js", function() {
-  return gulp
-    .src(["node_modules/slick-carousel/slick/slick.js",
-          "node_modules/jquery.maskedinput/src/jquery.maskedinput.js",
-          "node_modules/magnific-popup/dist/jquery.magnific-popup.min.js"])
-    .pipe(concat("libs.min.js"))
-    .pipe(uglify())
-    .pipe(gulp.dest("app/js"))
-    .pipe(browserSync.reload({ stream: true }));
-});
+function styles() {
+	return src([ // Берём файлы из источников
+		'app/' + preprocessor + '/**.' + preprocessor + '',
+	    'node_modules/magnific-popup/dist/magnific-popup.css',
+        ]) // Выбираем источник: "app/sass/main.sass" или "app/less/main.less"
 
-// Live Server (Browser Reloading) синхронизация с browser-sync
+	.pipe(eval(preprocessor)()) // Преобразуем значение переменной "preprocessor" в функцию
+	.pipe(concat('style.min.css')) // Конкатенируем в файл app.min.js
+	.pipe(autoprefixer({ overrideBrowserslist: ['last 10 versions'], grid: true })) // Создадим префиксы с помощью Autoprefixer
+	.pipe(cleancss( { level: { 1: { specialComments: 0 } } /* , format: 'beautify' */ } )) // Минифицируем стили
+	.pipe(dest('app/css/')) // Выгрузим результат в папку "app/css/"
+	.pipe(browserSync.stream()) // Сделаем инъекцию в браузер
+}
 
-gulp.task("browser-sync", function() {
-  browserSync.init({
-    server: {
-      baseDir: "app/"
-    }
-  });
-});
+// function images() {
+// 	return src('app/images/src/**/*') // Берём все изображения из папки источника
+// 	.pipe(newer('app/images/dest/')) // Проверяем, было ли изменено (сжато) изображение ранее
+// 	.pipe(imagemin()) // Сжимаем и оптимизируем изображеня
+// 	.pipe(dest('app/images/dest/')) // Выгружаем оптимизированные изображения в папку назначения
+// }
 
-// task - build для создания папки dist и переноса файлов
+// function cleanimg() {
+// 	return del('app/images/dest/**/*', { force: true }) // Удаляем всё содержимое папки "app/images/dest/"
+// }
 
-gulp.task("export", function() {
-  let buildHtml = gulp.src("app/**/*.html").pipe(gulp.dest("dist"));
-  let buildPhp = gulp.src("app/**/*.php").pipe(gulp.dest("dist"));
-  let buildCss = gulp.src("app/css/**/*.css").pipe(gulp.dest("dist/css"));
-  let buildJs = gulp.src("app/js/**/*.js").pipe(gulp.dest("dist/js"));
-  let buildFonts = gulp.src("app/fonts/**/*.*").pipe(gulp.dest("dist/fonts"));
-  let buildImg = gulp.src("app/images/**/*.*").pipe(gulp.dest("dist/images"));
-});
+function buildcopy() {
+	return src([ // Выбираем нужные файлы
+		'app/css/**/*.min.css',
+		'app/js/**/*.min.js',
+		'app/images/**/*',
+		'app/**/*.html',
+		], { base: 'app' }) // Параметр "base" сохраняет структуру проекта при копировании
+	.pipe(dest('dist')) // Выгружаем в папку с финальной сборкой
+}
+ 
+function cleandist() {
+	return del('dist/**/*', { force: true }) // Удаляем всё содержимое папки "dist/"
+}
 
-// task - watch для отслеживания и сохранения изменений в scss и html и js
+function startwatch() {
+ 
+	// Выбираем все файлы JS в проекте, а затем исключим с суффиксом .min.js
+	watch(['app/**/*.js', '!app/**/*.min.js'], scripts);
+	
+	// Мониторим файлы препроцессора на изменения
+	watch('app/**/' + preprocessor + '/**/*', styles);
+ 
+	// Мониторим файлы HTML на изменения
+	watch('app/**/*.html').on('change', browserSync.reload);
+ 
+	// Мониторим папку-источник изображений и выполняем images(), если есть изменения
+	// watch('app/images/src/**/*', images);
+ 
+}
 
-gulp.task("watch", function() {
-  gulp.watch("app/scss/**/*.scss", gulp.parallel("scss"));
-  gulp.watch("app/*.html", gulp.parallel("html"));
-  gulp.watch("app/js/*.js", gulp.parallel("script"));
-});
+// Экспортируем функцию browsersync() как таск browsersync. Значение после знака = это имеющаяся функция.
+exports.browsersync = browsersync;
+ 
+// Экспортируем функцию scripts() в таск scripts
+exports.scripts = scripts;
+ 
+// Экспортируем функцию styles() в таск styles
+exports.styles = styles;
 
-// task для удаления и экспортирования папки dist
+// Экспорт функции images() в таск images
+// exports.images = images;
 
-gulp.task("build", gulp.series("clean", "export"));
+// Экспортируем функцию cleanimg() как таск cleanimg
+// exports.cleanimg = cleanimg;
 
-// Запуск task css scss js browser-sync и watch (имя gulp)
+// Экспортируем функцию cleandist() как таск cleandist
+exports.cleandist = cleandist;
 
-gulp.task(
-  "default",
-  gulp.parallel("css", "scss", "js", "browser-sync", "watch")
-);
+// Создаём новый таск "build", который последовательно выполняет нужные операции
+exports.build = series(cleandist, styles, scripts, buildcopy);
+
+// Экспортируем дефолтный таск с нужным набором функций
+exports.default = parallel(styles, scripts, browsersync, startwatch);
